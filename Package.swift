@@ -2,17 +2,25 @@
 import PackageDescription
 
 let package = Package(
-    name: "CleanMyMacLite",
+    name: "Blimp",
     platforms: [
         .macOS(.v14)
     ],
     products: [
-        .executable(name: "CleanMyMacLite", targets: ["CleanMyMacLite"]),
+        .executable(name: "BlimpApp", targets: ["Blimp"]),
+        .executable(name: "blimp", targets: ["BlimpCLI"]),
     ],
     targets: [
         .executableTarget(
-            name: "CleanMyMacLite",
-            path: "Sources/CleanMyMacLite"
+            name: "Blimp",
+            path: "Sources/Blimp",
+            resources: [
+                .process("Resources")
+            ]
+        ),
+        .executableTarget(
+            name: "BlimpCLI",
+            path: "Sources/BlimpCLI"
         ),
     ]
 )

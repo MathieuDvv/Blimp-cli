@@ -1,11 +1,11 @@
-# Blimp-cli
+# Blimp
 
-Blimp-cli is a lightweight macOS cleaner focused on the two simplest maintenance tasks:
+Blimp is a lightweight macOS cleaner focused on the two simplest maintenance tasks:
 
 - release reclaimable memory pressure without asking for administrator access
 - clear user cache and log folders from a small menu bar app
 
-The current Swift package still uses the internal product name `CleanMyMacLite`, but this repository is published as `Blimp-cli`.
+This package now includes both the menu bar app and the terminal CLI.
 
 ## Features
 
@@ -21,10 +21,16 @@ The current Swift package still uses the internal product name `CleanMyMacLite`,
 - macOS 14 or later
 - Xcode 15 or a Swift 5.9 toolchain
 
-## Run
+## Run The Menu Bar App
 
 ```bash
-swift run
+swift run BlimpApp
+```
+
+## Run The CLI
+
+```bash
+swift run blimp
 ```
 
 ## Build
@@ -37,5 +43,6 @@ swift build
 
 ```text
 Package.swift
-Sources/CleanMyMacLite/
+Sources/Blimp/
+Sources/BlimpCLI/
 ```

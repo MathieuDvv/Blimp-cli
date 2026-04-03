@@ -19,7 +19,7 @@ class StatusBarController: NSObject {
             // Set frame for the hosting view
             hostingView.frame = NSRect(x: 0, y: 0, width: 40, height: 22)
             hostingView.wantsLayer = true
-            hostingView.layer?.backgroundColor = .clear
+            hostingView.layer?.backgroundColor = NSColor.clear.cgColor
             button.addSubview(hostingView)
             button.frame = hostingView.frame
             
@@ -41,6 +41,16 @@ class StatusBarController: NSObject {
     }
 }
 
+private enum BlimpAsset {
+    static var statusImage: NSImage? {
+        guard let url = Bundle.module.url(forResource: "Blimp", withExtension: "svg") else {
+            return nil
+        }
+
+        return NSImage(contentsOf: url)
+    }
+}
+
 struct BlimpMenuView: View {
     @ObservedObject var monitor: SystemMonitor
     @State private var offset: CGFloat = 0
@@ -50,7 +60,7 @@ struct BlimpMenuView: View {
     
     var body: some View {
         ZStack {
-            if let nsImage = NSImage(contentsOfFile: "/Users/mathieu/Documents/Projects/Others/CleanMyMacLite/Blimp.svg") {
+            if let nsImage = BlimpAsset.statusImage {
                 let _ = { nsImage.isTemplate = true }()
                 Image(nsImage: nsImage)
                     .renderingMode(.template)
@@ -61,7 +71,8 @@ struct BlimpMenuView: View {
                     .scaleEffect(scale)
                     .rotationEffect(.degrees(rotation))
                     .offset(y: offset)
-                    .onReceive(monitor.$isFreeingRAM.combineLatest(monitor.$isCleaningStorage)) { freeing, cleaning in
+                    .onReceive(monitor.$isFreeingRAM.combineLatest(monitor.$isCleaningStorage)) { state in
+                        let (freeing, cleaning) = state
                         if freeing || cleaning {
                             if !isAnimating {
                                 startAnimation()

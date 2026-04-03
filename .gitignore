@@ -4,6 +4,10 @@
 .build/
 .swiftpm/
 Package.resolved
+*.d
+*.dia
+*.o
+*.swiftdeps
 
 # Xcode
 DerivedData/

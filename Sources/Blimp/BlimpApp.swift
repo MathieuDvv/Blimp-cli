@@ -2,7 +2,7 @@ import SwiftUI
 import AppKit
 
 @main
-struct CleanMyMacLiteApp: App {
+struct BlimpApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     var body: some Scene {
@@ -27,7 +27,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // If bundleIdentifier is nil (running as raw binary), check by name
         if currentApp.bundleIdentifier == nil {
             let otherByName = NSWorkspace.shared.runningApplications.filter {
-                $0.localizedName == "CleanMyMacLite" &&
+                $0.localizedName == "Blimp" &&
                 $0.processIdentifier != currentApp.processIdentifier
             }
             if !otherByName.isEmpty {
