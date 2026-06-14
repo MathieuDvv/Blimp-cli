@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build universal macOS binary
+        run: |
+          swift build -c release --triple arm64-apple-macosx
+          swift build -c release --triple x86_64-apple-macosx
+          mkdir -p dist
+          lipo -create -output dist/blimp \
+            "$(swift build -c release --triple arm64-apple-macosx --show-bin-path)/blimp" \
+            "$(swift build -c release --triple x86_64-apple-macosx --show-bin-path)/blimp"
+          tar -czf blimp-macos-universal.tar.gz -C dist blimp
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: blimp-macos-universal.tar.gz
+
+  linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: x86_64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    container: swift:6.0
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Linux binary
+        run: |
+          swift build -c release --static-swift-stdlib
+          mkdir -p dist
+          cp "$(swift build -c release --show-bin-path)/blimp" dist/blimp
+          tar -czf blimp-linux-${{ matrix.arch }}.tar.gz -C dist blimp
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-${{ matrix.arch }}
+          path: blimp-linux-${{ matrix.arch }}.tar.gz
+
+  release:
+    needs: [macos, linux]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Collect assets + checksums
+        run: |
+          mkdir -p release
+          find artifacts -name '*.tar.gz' -exec cp {} release/ \;
+          cd release && sha256sum *.tar.gz > checksums.txt
+          cat checksums.txt
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: release/*
+          generate_release_notes: true
+          fail_on_unmatched_files: true

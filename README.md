@@ -43,6 +43,30 @@ all from a snappy keyboard-driven TUI.
 
 ## 🚀 Installation
 
+### One-line install (macOS & Linux)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/MathieuDvv/Blimp-cli/main/install.sh | bash
+```
+
+This grabs the prebuilt binary for your OS/arch from the [latest release](https://github.com/MathieuDvv/Blimp-cli/releases/latest)
+(macOS ships a universal arm64 + x86_64 binary; Linux ships x86_64 and arm64),
+verifies its checksum, and installs to `/usr/local/bin` or `~/.local/bin`. If no
+prebuilt binary matches your platform it falls back to building from source.
+
+Pin a version or install dir with env vars:
+
+```bash
+BLIMP_VERSION=v1.0.0 BLIMP_INSTALL=~/bin \
+  curl -fsSL https://raw.githubusercontent.com/MathieuDvv/Blimp-cli/main/install.sh | bash
+```
+
+### Manual download
+
+Grab the tarball for your platform from the
+[Releases page](https://github.com/MathieuDvv/Blimp-cli/releases/latest), extract,
+and drop `blimp` on your `PATH`. Windows users: download `blimp.exe`.
+
 ### Build from source
 
 Requires [Swift 5.9+](https://www.swift.org/install/).
@@ -51,16 +75,7 @@ Requires [Swift 5.9+](https://www.swift.org/install/).
 git clone https://github.com/MathieuDvv/Blimp-cli.git
 cd Blimp-cli
 swift build -c release
-```
-
-The binary lands at `.build/release/blimp`. Drop it somewhere on your `PATH`:
-
-```bash
-# macOS / Linux
-cp .build/release/blimp ~/.local/bin/blimp     # make sure ~/.local/bin is on $PATH
-
-# Windows (PowerShell)
-copy .build\release\blimp.exe $Env:USERPROFILE\bin\blimp.exe
+cp .build/release/blimp ~/.local/bin/blimp     # ensure ~/.local/bin is on $PATH
 ```
 
 Then just run:
