@@ -2,25 +2,11 @@
 import PackageDescription
 
 let package = Package(
-    name: "Blimp",
-    platforms: [
-        .macOS(.v14)
-    ],
-    products: [
-        .executable(name: "BlimpApp", targets: ["Blimp"]),
-        .executable(name: "blimp", targets: ["BlimpCLI"]),
-    ],
+    name: "blimp",
     targets: [
         .executableTarget(
-            name: "Blimp",
-            path: "Sources/Blimp",
-            resources: [
-                .process("Resources")
-            ]
-        ),
-        .executableTarget(
-            name: "BlimpCLI",
-            path: "Sources/BlimpCLI"
+            name: "blimp",
+            path: "Sources/blimp"
         ),
     ]
 )
