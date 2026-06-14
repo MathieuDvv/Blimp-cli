@@ -271,10 +271,6 @@ class SystemMonitor: @unchecked Sendable {
         for i in stride(from: 0, to: capacity, by: pageSize) { ptr[i] = 0 }
         Thread.sleep(forTimeInterval: 0.3)
         ptr.deallocate()
-        #if os(Linux)
-        // Hint to glibc allocator to return freed pages to OS
-        malloc_trim(0)
-        #endif
         updateRAM()
     }
 

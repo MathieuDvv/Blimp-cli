@@ -1,4 +1,9 @@
 import Foundation
+#if canImport(Glibc)
+import Glibc
+#elseif canImport(Darwin)
+import Darwin
+#endif
 
 struct FileGroup {
     let name: String
@@ -246,10 +251,15 @@ class DiskAnalyzer: @unchecked Sendable {
                 items: trashItems, totalSize: Self.sizeOfDir(trashURL.path)))
         }
 
-        // /tmp (user-owned files only — best effort)
-        let tmp = URL(fileURLWithPath: "/tmp")
-        if let items = try? fm.contentsOfDirectory(at: tmp, includingPropertiesForKeys: [.ownerAccountIDKey])
-                               .filter({ (try? $0.resourceValues(forKeys: [.ownerAccountIDKey]).allValues[.ownerAccountIDKey] as? Int) == getuid().hashValue }) {
+        // /tmp (files you own only — best effort)
+        let myUID = Int(getuid())
+        let tmp   = URL(fileURLWithPath: "/tmp")
+        if let all = try? fm.contentsOfDirectory(at: tmp, includingPropertiesForKeys: nil) {
+            let items = all.filter { url in
+                guard let owner = (try? fm.attributesOfItem(atPath: url.path))?[.ownerAccountID] as? NSNumber
+                else { return false }
+                return owner.intValue == myUID
+            }
             let size = items.reduce(0) { $0 + Self.sizeOfFile($1) }
             if size > 1024 * 1024 {
                 groups.append(FileGroup(name: "Your /tmp Files", tag: "TMP",

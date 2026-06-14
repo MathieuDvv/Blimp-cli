@@ -521,8 +521,10 @@ class BlimpApp {
                     try fm.removeItem(at: url)
                     totalFreed += size
                 } catch {
-                    // Try trash as fallback
+                    #if os(macOS)
+                    // Fall back to moving the item to the Trash
                     try? fm.trashItem(at: url, resultingItemURL: nil)
+                    #endif
                 }
             }
             deleted.append(group.name)

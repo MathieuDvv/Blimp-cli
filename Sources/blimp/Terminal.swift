@@ -137,7 +137,12 @@ struct Terminal {
         return (rows: max(10, rows), cols: max(40, cols))
         #else
         var w = winsize()
-        if ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1 { return (24, 80) }
+        #if os(Linux)
+        let req = UInt(TIOCGWINSZ)
+        #else
+        let req = TIOCGWINSZ
+        #endif
+        if ioctl(STDOUT_FILENO, req, &w) == -1 { return (24, 80) }
         return (Int(w.ws_row), Int(w.ws_col))
         #endif
     }
